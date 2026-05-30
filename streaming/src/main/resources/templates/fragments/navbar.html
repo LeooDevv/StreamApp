@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark" style="background:#0d0d1a;">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-danger" th:href="@{/dashboard}">
+      <i class="bi bi-play-circle-fill me-2"></i>StreamApp
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/midias}"><i class="bi bi-collection-play me-1"></i>Catalogo</a>
+        </li>
+        <li class="nav-item ms-2">
+          <a class="nav-link btn btn-danger btn-sm px-3 text-white" th:href="@{/midias/nova}">
+            <i class="bi bi-plus-lg me-1"></i>Adicionar Midia
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</body>
+</html>

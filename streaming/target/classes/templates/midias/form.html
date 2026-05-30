@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${titulo} + ' - StreamApp'">StreamApp</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <style>
+    body { background: #0d0d1a; color: #eee; }
+    .card { background: #161625; border: 1px solid #2a2a40; }
+    .card-header { background: #e50914 !important; }
+    .form-control, .form-select { background: #0d0d1a; border-color: #2a2a40; color: #eee; }
+    .form-control:focus, .form-select:focus { background: #1e1e35; border-color: #e50914; color: #eee; box-shadow: none; }
+    .tipo-campos { background: #1e1e35 !important; border-color: #2a2a40 !important; }
+    .breadcrumb-item a { color: #e50914; }
+    label { color: #aaa; }
+  </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container mt-4" style="max-width:720px;">
+
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+      <li class="breadcrumb-item"><a th:href="@{/midias}">Catalogo</a></li>
+      <li class="breadcrumb-item active text-light" th:text="${titulo}"></li>
+    </ol>
+  </nav>
+
+  <div class="card shadow">
+    <div class="card-header text-white">
+      <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i><span th:text="${titulo}"></span></h5>
+    </div>
+    <div class="card-body">
+      <form th:action="@{/midias/salvar}" th:object="${midia}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+          <label class="form-label">Tipo de Midia *</label>
+          <select id="tipo" th:field="*{tipo}" class="form-select"
+                  th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'"
+                  onchange="mostrarCampos()">
+            <option value="">-- Selecione --</option>
+            <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+          </select>
+          <div class="invalid-feedback" th:errors="*{tipo}"></div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label">Titulo *</label>
+            <input type="text" th:field="*{titulo}" class="form-control"
+                   th:classappend="${#fields.hasErrors('titulo')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{titulo}"></div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Ano de Lancamento *</label>
+            <input type="number" th:field="*{anoLancamento}" class="form-control" min="1888" max="2100"
+                   th:classappend="${#fields.hasErrors('anoLancamento')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{anoLancamento}"></div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Genero *</label>
+            <select th:field="*{genero}" class="form-select"
+                    th:classappend="${#fields.hasErrors('genero')} ? 'is-invalid'">
+              <option value="">-- Selecione --</option>
+              <option value="Acao">Acao</option>
+              <option value="Comedia">Comedia</option>
+              <option value="Drama">Drama</option>
+              <option value="Terror">Terror</option>
+              <option value="Ficcao Cientifica">Ficcao Cientifica</option>
+              <option value="Documentario">Documentario</option>
+              <option value="Romance">Romance</option>
+              <option value="Tecnologia">Tecnologia</option>
+              <option value="Educacao">Educacao</option>
+              <option value="Entretenimento">Entretenimento</option>
+              <option value="Esportes">Esportes</option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{genero}"></div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Avaliacao (0 a 5) *</label>
+            <input type="number" th:field="*{avaliacao}" class="form-control"
+                   step="0.1" min="0" max="5"/>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descricao *</label>
+          <textarea th:field="*{descricao}" class="form-control" rows="3"
+                    th:classappend="${#fields.hasErrors('descricao')} ? 'is-invalid'"></textarea>
+          <div class="invalid-feedback" th:errors="*{descricao}"></div>
+        </div>
+
+        <!-- Campos FILME -->
+        <div id="campos-FILME" class="tipo-campos border rounded p-3 mb-3" style="display:none">
+          <h6 class="text-danger mb-3"><i class="bi bi-film me-2"></i>Dados do Filme</h6>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Duracao (min)</label>
+              <input type="number" th:field="*{duracaoMinutos}" class="form-control" min="1"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Diretor</label>
+              <input type="text" th:field="*{diretor}" class="form-control"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Classificacao</label>
+              <select th:field="*{classificacaoIndicativa}" class="form-select">
+                <option value="Livre">Livre</option>
+                <option value="10 anos">10 anos</option>
+                <option value="12 anos">12 anos</option>
+                <option value="14 anos">14 anos</option>
+                <option value="16 anos">16 anos</option>
+                <option value="18 anos">18 anos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos SERIE -->
+        <div id="campos-SERIE" class="tipo-campos border rounded p-3 mb-3" style="display:none">
+          <h6 class="text-primary mb-3"><i class="bi bi-display me-2"></i>Dados da Serie</h6>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Temporadas</label>
+              <input type="number" th:field="*{numTemporadas}" class="form-control" min="1"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Episodios</label>
+              <input type="number" th:field="*{numEpisodios}" class="form-control" min="1"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select th:field="*{status}" class="form-select">
+                <option value="EM_ANDAMENTO">Em andamento</option>
+                <option value="ENCERRADA">Encerrada</option>
+                <option value="CANCELADA">Cancelada</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos PODCAST -->
+        <div id="campos-PODCAST" class="tipo-campos border rounded p-3 mb-3" style="display:none">
+          <h6 class="text-success mb-3"><i class="bi bi-mic me-2"></i>Dados do Podcast</h6>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label">Apresentador</label>
+              <input type="text" th:field="*{apresentador}" class="form-control"/>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Episodios</label>
+              <input type="number" th:field="*{numEpsPodcast}" class="form-control" min="1"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Periodicidade</label>
+              <select th:field="*{periodicidade}" class="form-select">
+                <option value="DIARIO">Diario</option>
+                <option value="SEMANAL">Semanal</option>
+                <option value="QUINZENAL">Quinzenal</option>
+                <option value="MENSAL">Mensal</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos LIVE -->
+        <div id="campos-LIVE" class="tipo-campos border rounded p-3 mb-3" style="display:none">
+          <h6 class="text-warning mb-3"><i class="bi bi-broadcast me-2"></i>Dados da Live</h6>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <label class="form-label">Apresentador</label>
+              <input type="text" th:field="*{apresentadorLive}" class="form-control"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Plataforma</label>
+              <select th:field="*{plataforma}" class="form-select">
+                <option value="YouTube">YouTube</option>
+                <option value="Twitch">Twitch</option>
+                <option value="Instagram">Instagram</option>
+                <option value="TikTok">TikTok</option>
+              </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" th:field="*{aoVivo}" id="aoVivo"/>
+                <label class="form-check-label text-light" for="aoVivo">Ao Vivo agora</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-danger px-4"><i class="bi bi-save me-1"></i>Salvar</button>
+          <a th:href="@{/midias}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+  const tipoAtual = /*[[*{tipo}]]*/ "";
+  function mostrarCampos() {
+    const tipo = document.getElementById("tipo").value;
+    document.querySelectorAll(".tipo-campos").forEach(el => el.style.display = "none");
+    if (tipo) { const el = document.getElementById("campos-" + tipo); if (el) el.style.display = "block"; }
+  }
+  if (tipoAtual) mostrarCampos();
+  document.getElementById("tipo").addEventListener("change", mostrarCampos);
+</script>
+</body>
+</html>
