@@ -81,14 +81,7 @@ Cada subclasse implementa de forma polimórfica:
 
 ### Passos
 
-```bash
-# 1. Clone o repositório
-git clone https://github.com/seu-usuario/LP2-Final-SeuNome.git
-
-# 2. Entre na pasta do projeto
-cd LP2-Final-SeuNome
-
-# 3. Execute
+```
 mvn spring-boot:run
 ```
 
